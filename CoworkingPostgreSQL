@@ -1,0 +1,146 @@
+BEGIN;
+
+
+CREATE TABLE IF NOT EXISTS coworking."user"
+(
+    id bigint NOT NULL,
+    surname character varying(255) NOT NULL,
+    first_name character varying(255) NOT NULL,
+    last_name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(100) NOT NULL,
+    phone_number character varying(45) NOT NULL,
+    photo bytea NOT NULL,
+    form_of_work character varying(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.job_title
+(
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.user_job_title_ref
+(
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    job_title_id bigint NOT NULL,
+    is_actual boolean NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.workplace
+(
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    "Is_anyone_sitting_here" boolean NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.booking_history
+(
+    id bigint NOT NULL,
+    start_date_and_time timestamp(6) with time zone NOT NULL,
+    end_date_and_time timestamp(6) with time zone NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.reservation
+(
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    workplace_id bigint NOT NULL,
+    start_date_and_time timestamp(6) with time zone NOT NULL,
+    end_date_and_time timestamp(6) with time zone NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.user_type
+(
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.user_type_ref
+(
+    id bigint NOT NULL,
+    user_type_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS coworking.booking_history_ref
+(
+    id bigint NOT NULL,
+    workplace_id bigint NOT NULL,
+    booking_history_id bigint NOT NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE IF EXISTS coworking.user_job_title_ref
+    ADD FOREIGN KEY (user_id)
+    REFERENCES coworking."user" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS coworking.user_job_title_ref
+    ADD FOREIGN KEY (job_title_id)
+    REFERENCES coworking.job_title (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS coworking.reservation
+    ADD FOREIGN KEY (workplace_id)
+    REFERENCES coworking.workplace (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS coworking.reservation
+    ADD FOREIGN KEY (user_id)
+    REFERENCES coworking."user" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS coworking.user_type_ref
+    ADD FOREIGN KEY (user_type_id)
+    REFERENCES coworking.user_type (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS coworking.user_type_ref
+    ADD FOREIGN KEY (user_id)
+    REFERENCES coworking."user" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS coworking.booking_history_ref
+    ADD FOREIGN KEY (workplace_id)
+    REFERENCES coworking.workplace (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS coworking.booking_history_ref
+    ADD FOREIGN KEY (booking_history_id)
+    REFERENCES coworking.booking_history (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+END;
